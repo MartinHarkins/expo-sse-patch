@@ -1,13 +1,24 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Button, ScrollView, StyleSheet, Text, View } from 'react-native'
+
+import EventList from './src/EventList'
+import { useEventSource } from './src/useEventSource'
 
 export default function App() {
+  const { events, clearEvents, connect, close } = useEventSource()
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+    <ScrollView>
+      <View style={styles.container}>
+        <Text>Press the button to open up the connexion to the SSE server (mercure)</Text>
+        <Button title="Open New Connexion" onPress={() => connect()} />
+        <Button title="Close Connexion" onPress={() => close()} />
+
+        <EventList events={events} />
+
+        <Button title="Clear Events" onPress={() => clearEvents()} />
+      </View>
+    </ScrollView>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -16,5 +27,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 10,
   },
-});
+})
