@@ -119,3 +119,8 @@ In app:
 
 Didn't find any issues with the project!
 ```
+
+### Side note about event-source-polyfill
+Had to patch package `event-source-polyfill` as, while in release variant, it crashes the application when there is a connexion error. More there: https://github.com/Yaffle/EventSource/pull/228#issuecomment-1986087336
+
+That is a side issue.
