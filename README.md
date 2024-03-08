@@ -1,5 +1,8 @@
 # Offer some patches for fixing SSE for expo
 
+- [expo-env-info](#npx-expo-env-info) (anchor)
+- [expo doctor](#npx-expo-doctorlatest) (anchor)
+
 Related:
 - https://github.com/facebook/react-native/issues/28835 => With React-Native, SSE aka EventSource does not receive Events on Android#28835
 - https://github.com/facebook/react-native/issues/27741 => fetch implementation does not support streams from the spec - needs implementation in React Native core#27741
@@ -7,6 +10,15 @@ Related:
 Plugin that patches the problem: [./plugins/withEventSourceFixes.ts](./plugins/withEventSourceFixes.ts)
 > Using expo plugins: https://docs.expo.dev/config-plugins/plugins-and-mods/
 
+Essentially, the plugin patch consists in:
+- commenting out the Flipper initialization
+- checking for content type `text/event-stream` in https://github.com/expo/expo/blob/5bd5d1695f932b8448950bb5d927a06bca27547c/packages/expo-modules-core/android/src/main/java/expo/modules/kotlin/devtools/ExpoRequestCdpInterceptor.kt#L57
+
+### Side note about event-source-polyfill
+Had to patch package `event-source-polyfill` as, while in release variant, it crashes the application when there is a connexion error. More there: https://github.com/Yaffle/EventSource/pull/228#issuecomment-1986087336  
+That is a side issue and doesn't remove the fact that expo and react-native are not letting the sse streams through.
+
+## Reproducing the problem
 ### 1. Run server
 ```
 # runs npm install within server-sse/
@@ -81,6 +93,7 @@ In app:
    >  data: {"num": 2}]  
    > etc.
 
+## Appendix
 ### npx expo-env-info:
 ```
   expo-env-info 1.2.0 environment info:
@@ -119,8 +132,3 @@ In app:
 
 Didn't find any issues with the project!
 ```
-
-### Side note about event-source-polyfill
-Had to patch package `event-source-polyfill` as, while in release variant, it crashes the application when there is a connexion error. More there: https://github.com/Yaffle/EventSource/pull/228#issuecomment-1986087336
-
-That is a side issue.
