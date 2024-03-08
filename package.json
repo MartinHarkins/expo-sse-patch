@@ -4,6 +4,8 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
+    "server:setup": "(cd server-sse; npm i)",
+    "server:start": "(cd server-sse; npm start)",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web"
