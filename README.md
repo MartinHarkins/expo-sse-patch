@@ -4,11 +4,14 @@
 - [expo doctor](#npx-expo-doctorlatest) (anchor)
 
 Related:
-- https://github.com/facebook/react-native/issues/28835 => With React-Native, SSE aka EventSource does not receive Events on Android#28835
-- https://github.com/facebook/react-native/issues/27741 => fetch implementation does not support streams from the spec - needs implementation in React Native core#27741
+- Expo Issue: https://github.com/expo/expo/issues/27526
+- RN Flipper Issue: https://github.com/facebook/react-native/issues/28835 => With React-Native, SSE aka EventSource does not receive Events on Android#28835
+- event-source-polyfill PR: https://github.com/Yaffle/EventSource/pull/228
 
-Plugin that patches the problem: [./plugins/withEventSourceFixes.ts](./plugins/withEventSourceFixes.ts)
-> Using expo plugins: https://docs.expo.dev/config-plugins/plugins-and-mods/
+Plugins that patch the problems: 
+- [./plugins/withAndroidReactNativeSSEPatch.ts](./plugins/withAndroidReactNativeSSEPatch.ts)
+- [./plugins/withAndroidExpoSSEPatch.ts](./plugins/withAndroidExpoSSEPatch.ts)
+> How to use expo plugins: https://docs.expo.dev/config-plugins/plugins-and-mods/
 
 Essentially, the plugin patch consists in:
 - commenting out the Flipper initialization
@@ -52,8 +55,8 @@ rm -r android node_modules
 
 npm install
 
-# run without the fix
-npm run android:nofix
+# run with the fix
+npm run android
 
 # once the app is started
 adb reverse tcp:3000 tcp:3000 

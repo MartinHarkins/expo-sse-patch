@@ -1,6 +1,7 @@
+import { withPlugins } from '@expo/config-plugins'
 import { ConfigContext, ExpoConfig } from 'expo/config'
 
-import { withAndroidEventSourceFixes } from './plugins'
+import { withAndroidExpoSSEPatch, withAndroidReactNativeSSEPatch } from './plugins'
 
 const baseConfig: ExpoConfig = {
   name: 'expo-sse-patch',
@@ -51,5 +52,7 @@ export default function setupConfig({ config }: ConfigContext) {
     return expoConfig
   }
 
-  return withAndroidEventSourceFixes(expoConfig)
+  withPlugins(expoConfig, [withAndroidReactNativeSSEPatch, withAndroidExpoSSEPatch])
+
+  return expoConfig
 }
