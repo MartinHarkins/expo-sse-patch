@@ -28,11 +28,28 @@ const baseConfig: ExpoConfig = {
   web: {
     favicon: './assets/favicon.png',
   },
+  plugins: [
+    [
+      'expo-build-properties',
+      {
+        android: {
+          // allow connecting to local http server while in release mode.
+          usesCleartextTraffic: true,
+        },
+      },
+    ],
+  ],
 }
 
 export default function setupConfig({ config }: ConfigContext) {
-  return withAndroidEventSourceFixes({
+  const expoConfig = {
     ...config,
     ...baseConfig,
-  })
+  }
+
+  if (process.env.SSE_NO_FIX === 'true') {
+    return expoConfig
+  }
+
+  return withAndroidEventSourceFixes(expoConfig)
 }

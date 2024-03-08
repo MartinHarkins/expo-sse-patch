@@ -1,0 +1,16 @@
+diff --git a/node_modules/event-source-polyfill/src/eventsource.js b/node_modules/event-source-polyfill/src/eventsource.js
+index cd2de7c..92862c0 100644
+--- a/node_modules/event-source-polyfill/src/eventsource.js
++++ b/node_modules/event-source-polyfill/src/eventsource.js
+@@ -992,7 +992,10 @@
+         abortController = transport.open(xhr, onStart, onProgress, onFinish, requestURL, withCredentials, requestHeaders);
+       } catch (error) {
+         close();
+-        throw error;
++
++        var event = new ErrorEvent("error", {error: error});
++        es.dispatchEvent(event);
++        fire(es, es.onerror, event);
+       }
+     };
+ 
