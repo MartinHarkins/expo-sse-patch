@@ -1,4 +1,3 @@
-// src/index.js
 import dotenv from 'dotenv'
 import express, { Express, Request, Response } from 'express'
 

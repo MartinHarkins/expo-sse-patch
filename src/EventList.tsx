@@ -8,6 +8,7 @@ export default function EventList({ events }: { events: { type: string; data?: s
           <View key={`ev.type.${i}`} style={styles.resultItem}>
             <Text>type: {ev.type}</Text>
             {'data' in ev && <Text>data: {ev.data}</Text>}
+            {'error' in ev && ev.error !== null && <Text>{ev.error?.toString()}</Text>}
           </View>
         )
       })}
