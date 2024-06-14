@@ -1,4 +1,6 @@
-# Offer some patches for fixing SSE for expo
+# Offer some patches for fixing SSE for expo SDK 50
+
+> For expo SDK 51 check out https://github.com/etler/expo-sse-patch/tree/expo-51
 
 - [expo-env-info](#npx-expo-env-info) (anchor)
 - [expo doctor](#npx-expo-doctorlatest) (anchor)
