@@ -1,20 +1,31 @@
-# Offer some patches for fixing SSE for expo
+# Offer some patches for fixing SSE for expo SDK 51
+
+> For expo **SDK 50**, find the reproduction & resolution in branch [expo-50](https://github.com/MartinHarkins/expo-sse-patch/tree/expo-50)
+
+> Thanks for **@etler**'s work for the SDK 51 patch: https://github.com/etler/expo-sse-patch/tree/expo-51-fix
+> His detailed investigation:
+> - https://github.com/expo/expo/issues/27526#issuecomment-2148457485
+> - https://github.com/expo/expo/issues/27526#issuecomment-2148893292
+> 
+> I picked his ./plugins/withAndroidExpoSSEPatch.ts and just restricted the `if` condition a bit
+> 
+> ```diff
+> - if (true) {
+> + if (body.contentType()?.type == "text" && body.contentType()?.subtype == "event-stream" || peeked.request(byteCount + 1)) {
+> ```
 
 - [expo-env-info](#npx-expo-env-info) (anchor)
 - [expo doctor](#npx-expo-doctorlatest) (anchor)
 
 Related:
 - Expo Issue: https://github.com/expo/expo/issues/27526
-- RN Flipper Issue: https://github.com/facebook/react-native/issues/28835 => With React-Native, SSE aka EventSource does not receive Events on Android#28835
 - event-source-polyfill PR: https://github.com/Yaffle/EventSource/pull/228
 
 Plugins that patch the problems: 
-- [./plugins/withAndroidReactNativeSSEPatch.ts](./plugins/withAndroidReactNativeSSEPatch.ts)
 - [./plugins/withAndroidExpoSSEPatch.ts](./plugins/withAndroidExpoSSEPatch.ts)
 > How to use expo plugins: https://docs.expo.dev/config-plugins/plugins-and-mods/
 
 Essentially, the plugin patch consists in:
-- commenting out the Flipper initialization
 - checking for content type `text/event-stream` in https://github.com/expo/expo/blob/5bd5d1695f932b8448950bb5d927a06bca27547c/packages/expo-modules-core/android/src/main/java/expo/modules/kotlin/devtools/ExpoRequestCdpInterceptor.kt#L57
 
 ### Side note about event-source-polyfill
@@ -39,7 +50,7 @@ rm -r android node_modules
 npm install
 
 # run without the fix
-eas build --platform android --profile development --local
+SSE_NO_FIX=true eas build --platform android --profile development --local
 # you will be prompted to create an eas project and add the projectId to app.config.ts
  
 # once the app is started
@@ -57,32 +68,8 @@ rm -r android node_modules
 npm install
 
 # run with the fix
-npm run android
-
-# once the app is started
-adb reverse tcp:3000 tcp:3000 
-```
-
-In app:
-1. Press Open Connexion => should print
-   > [type: open]  
-   > [type: message  
-   >  data: {"num": 1}]  
-   > [type: message  
-   >  data: {"num": 2}]  
-   > etc.
-
-### 4. release build
-```
-# cleanup
-rm -r android node_modules
-
-npm install
-
-# run with or without the fix
-npm run android:nofix -- --variant release --no-build-cache
-# or
-npm run android -- --variant release --no-build-cache
+eas build --platform android --profile development --local
+# you will be prompted to create an eas project and add the projectId to app.config.ts
 
 # once the app is started
 adb reverse tcp:3000 tcp:3000 

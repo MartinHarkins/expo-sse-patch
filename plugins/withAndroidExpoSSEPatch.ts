@@ -11,15 +11,14 @@ const PATCH_TAG = '[SSE_PATCH]'
 /**
  * Prevents expo's CdpInterceptor from breaking on streams
  *
- * Essentially applies in {projectRoot}/node_modules/expo-modules-core/android/src/main/java/expo/modules/kotlin/devtools/ExpoRequestCdpInterceptor.kt
+ * Essentially applies in {projectRoot}/node_modules/expo-modules-core/android/src/main/java/expo/modules/kotlin/devtools/ExpoNetworkInspectOkHttpInterceptors.kt
  * ```diff
- * - if (response.peekBody(ExpoNetworkInspectOkHttpNetworkInterceptor.MAX_BODY_SIZE + 1).contentLength() <= ExpoNetworkInspectOkHttpNetworkInterceptor.MAX_BODY_SIZE) {
- * + if (response.body?.contentType()?.type == "text" && response.body?.contentType()?.subtype == "event-stream") {
- * +      // do nothing for now
- * + } else if (response.peekBody(ExpoNetworkInspectOkHttpNetworkInterceptor.MAX_BODY_SIZE + 1).contentLength() <= ExpoNetworkInspectOkHttpNetworkInterceptor.MAX_BODY_SIZE) {
- *      val params2 = ExpoReceivedResponseBodyParams(now, requestId, request, response)
- *      dispatchEvent(Event("Expo(Network.receivedResponseBody)", params2))
- *   }
+ * - if (peeked.request(byteCount + 1)) {
+ * + if (body.contentType()?.type == "text" && body.contentType()?.subtype == "event-stream" || peeked.request(byteCount + 1)) {
+ *   // When the request() returns true,
+ *   // it means the source have more available bytes then [byteCount].
+ *   return null
+ * }
  * ```
  *
  * @param config
@@ -28,7 +27,7 @@ export function withAndroidExpoSSEPatch(config: ExpoConfig) {
   return withDangerousMod(config, [
     'android',
     async (config) => {
-      // {projectRoot}/node_modules/expo-modules-core/android/src/main/java/expo/modules/kotlin/devtools/ExpoRequestCdpInterceptor.kt
+      // {projectRoot}/node_modules/expo-modules-core/android/src/main/java/expo/modules/kotlin/devtools/ExpoNetworkInspectOkHttpInterceptors.kt
       const projectRoot = config.modRequest.projectRoot
       const expoModuleCorePath = path.join(projectRoot, 'node_modules', 'expo-modules-core')
       const expoModuleCoreExists = await directoryExistsAsync(expoModuleCorePath)
@@ -39,11 +38,11 @@ export function withAndroidExpoSSEPatch(config: ExpoConfig) {
 
       const interceptorPath = path.join(
         expoModuleCorePath,
-        'android/src/main/java/expo/modules/kotlin/devtools/ExpoRequestCdpInterceptor.kt',
+        'android/src/main/java/expo/modules/kotlin/devtools/ExpoNetworkInspectOkHttpInterceptors.kt',
       )
       assert(
         interceptorPath,
-        `SSE_PATCH_ERR: ExpoRequestCdpInterceptor not found at android/src/main/java/expo/modules/kotlin/devtools/ExpoRequestCdpInterceptor.kt`,
+        `SSE_PATCH_ERR: ExpoNetworkInspectOkHttpInterceptors not found at android/src/main/java/expo/modules/kotlin/devtools/ExpoNetworkInspectOkHttpInterceptors.kt`,
       )
       const interceptor = getFileInfo(interceptorPath)
 
@@ -52,8 +51,7 @@ export function withAndroidExpoSSEPatch(config: ExpoConfig) {
         return config
       }
 
-      const breakStr =
-        'if (response.peekBody(ExpoNetworkInspectOkHttpNetworkInterceptor.MAX_BODY_SIZE + 1).contentLength() <= ExpoNetworkInspectOkHttpNetworkInterceptor.MAX_BODY_SIZE) {'
+      const breakStr = 'if (peeked.request(byteCount + 1)) {'
       const start = interceptor.contents.indexOf(breakStr)
       if (start < 0) {
         throw new Error('SSE_PATCH_ERR: Could not find interceptor break condition')
@@ -63,11 +61,8 @@ export function withAndroidExpoSSEPatch(config: ExpoConfig) {
         interceptor.contents,
         `
     // ${PATCH_TAG}: Ignore text/event-stream types of responses
-    // response.peekBody breaks for streams.
-    if (response.body?.contentType()?.type == "text" && response.body?.contentType()?.subtype == "event-stream") {
-      // do nothing for now
-    } else if (response.peekBody(ExpoNetworkInspectOkHttpNetworkInterceptor.MAX_BODY_SIZE + 1).contentLength() <= ExpoNetworkInspectOkHttpNetworkInterceptor.MAX_BODY_SIZE) {
-`,
+    // peeked.request(byteCount + 1) breaks for streams.
+    if (body.contentType()?.type == "text" && body.contentType()?.subtype == "event-stream" || peeked.request(byteCount + 1)) {`,
         start,
         start + breakStr.length,
       )
