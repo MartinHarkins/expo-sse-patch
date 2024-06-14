@@ -7,6 +7,8 @@
 > - https://github.com/expo/expo/issues/27526#issuecomment-2148457485
 > - https://github.com/expo/expo/issues/27526#issuecomment-2148893292
 > 
+> Essentially the problem was moved and only shows up in dev builds through `eas build`, which requires the `expo-dev-client`.
+> 
 > I picked his ./plugins/withAndroidExpoSSEPatch.ts and just restricted the `if` condition a bit
 > 
 > ```diff
@@ -87,22 +89,27 @@ In app:
 ## Appendix
 ### npx expo-env-info:
 ```
-  expo-env-info 1.2.0 environment info:
+    expo-env-info 1.2.0 environment info:
     System:
       OS: Linux 6.5 Ubuntu 22.04.4 LTS 22.04.4 LTS (Jammy Jellyfish)
       Shell: 5.8.1 - /bin/zsh
     Binaries:
-      Node: 20.10.0 - ~/.nvm/versions/node/v20.10.0/bin/node
-      npm: 10.5.0 - ~/.nvm/versions/node/v20.10.0/bin/npm
+      Node: 20.13.1 - ~/.nvm/versions/node/v20.13.1/bin/node
+      npm: 10.8.1 - ~/.nvm/versions/node/v20.13.1/bin/npm
+    SDKs:
+      Android SDK:
+        API Levels: 34
+        Build Tools: 33.0.1, 34.0.0
+        System Images: android-34 | Google APIs Intel x86_64 Atom, android-34 | Google Play Intel x86_64 Atom
     npmPackages:
-      expo: ~50.0.11 => 50.0.11 
+      expo: ^51.0 => 51.0.14 
       react: 18.2.0 => 18.2.0 
       react-dom: 18.2.0 => 18.2.0 
-      react-native: 0.73.4 => 0.73.4 
+      react-native: 0.74.2 => 0.74.2 
       react-native-web: ~0.19.6 => 0.19.10 
     npmGlobalPackages:
-      eas-cli: 7.2.0
-    Expo Workflow: bare
+      eas-cli: 10.0.0
+    Expo Workflow: managed
 ```
 
 ### npx expo-doctor@latest
@@ -116,8 +123,8 @@ In app:
 ✔ Check npm/ yarn versions
 ✔ Check for issues with metro config
 ✔ Check Expo config (app.json/ app.config.js) schema
-✔ Check that native modules do not use incompatible support packages
 ✔ Check for legacy global CLI installed locally
+✔ Check that native modules do not use incompatible support packages
 ✔ Check that native modules use compatible support package versions for installed Expo SDK
 ✔ Check that packages match versions required by installed Expo SDK
 
