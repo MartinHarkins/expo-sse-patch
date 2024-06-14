@@ -10,6 +10,11 @@ const baseConfig: ExpoConfig = {
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'light',
+  extra: {
+    eas: {
+      projectId: '', // fill in expo projectId here
+    },
+  },
   splash: {
     image: './assets/splash.png',
     resizeMode: 'contain',
@@ -52,7 +57,7 @@ export default function setupConfig({ config }: ConfigContext) {
     return expoConfig
   }
 
-  withPlugins(expoConfig, [withAndroidReactNativeSSEPatch, withAndroidExpoSSEPatch])
+  // withPlugins(expoConfig, [withAndroidReactNativeSSEPatch, withAndroidExpoSSEPatch])
 
   return expoConfig
 }
