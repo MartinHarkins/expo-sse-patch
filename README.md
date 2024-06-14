@@ -41,8 +41,9 @@ rm -r android node_modules
 npm install
 
 # run without the fix
-npm run android:nofix
-
+eas build --platform android --profile development --local
+# you will be prompted to create an eas project and add the projectId to app.config.ts
+ 
 # once the app is started
 adb reverse tcp:3000 tcp:3000 
 ```
