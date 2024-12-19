@@ -12,7 +12,7 @@ const baseConfig: ExpoConfig = {
   userInterfaceStyle: 'light',
   extra: {
     eas: {
-      projectId: '', // fill in expo projectId here
+      projectId: 'c5452e18-099e-4350-bb80-9a1b7df564cb', // fill in expo projectId here
     },
   },
   splash: {
