@@ -1,7 +1,4 @@
-import { withPlugins } from '@expo/config-plugins'
 import { ConfigContext, ExpoConfig } from 'expo/config'
-
-import { withAndroidExpoSSEPatch } from './plugins'
 
 const baseConfig: ExpoConfig = {
   name: 'expo-sse-patch',
@@ -48,16 +45,8 @@ const baseConfig: ExpoConfig = {
 }
 
 export default function setupConfig({ config }: ConfigContext) {
-  const expoConfig = {
+  return {
     ...config,
     ...baseConfig,
   }
-
-  if (process.env.SSE_NO_FIX === 'true') {
-    return expoConfig
-  }
-
-  withPlugins(expoConfig, [withAndroidExpoSSEPatch])
-
-  return expoConfig
 }
