@@ -1,6 +1,6 @@
 # Offer some patches for fixing SSE for expo SDK 51
 
-> Issue is **FIXED for expo SDK 52**  
+> Issue is **FIXED for expo SDK 52**  [expo-52](https://github.com/MartinHarkins/expo-sse-patch/tree/expo-52)
 > For expo **SDK 50**, find the reproduction & resolution in branch [expo-50](https://github.com/MartinHarkins/expo-sse-patch/tree/expo-50)
 
 > Thanks for **@etler**'s work for the SDK 51 patch: https://github.com/etler/expo-sse-patch/tree/expo-51-fix
